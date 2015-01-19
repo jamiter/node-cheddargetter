@@ -27,16 +27,16 @@ Not all API calls have been fully tested and many unit tests are still missing.
 # Install
 
 ```
-npm install cheddargetter
+npm install cg
 ```
 
 # Usage
 
 ```javascript
 var CheddarGetter = require("CheddarGetter");
-	
-var cg = new CheddarGetter("test@test.com", "TestPass", "ProdCode");
-	
+
+var cg = new CheddarGetter("email@example.com", "passwordExample", "ProductCode");
+
 cg.getAllPricingPlans(function (err, results) {
 	console.log(err, results);
 });
@@ -44,5 +44,8 @@ cg.getAllPricingPlans(function (err, results) {
 # Tests
 
 ```
-node test
+npm test
 ```
+
+# Credits
+Original work was done by [Kevin Smith](https://github.com/respectTheCode).
