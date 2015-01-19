@@ -2,7 +2,7 @@
 
 This module will simplify the process of integrating CheddarGetter into your existing node.js apps.
 
-As of version 0.1.4 the module implements the fallowing API calls:
+As of version 0.1.4 the module implements the following API calls:
 
 * `getAllPricingPlans(callback)`
 * `getPricingPlan(planCode, callback)`
