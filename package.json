@@ -1,21 +1,24 @@
 {
-	"name": "cheddargetter",
-	"version": "0.1.5",
-	"author": "Kevin Smith",
+	"name": "cg",
+	"version": "0.2.0",
+	"author": "Michiel ter Reehorst",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/respectTheCode/node-cheddargetter"
+		"url": "https://github.com/jamiter/node-cheddargetter"
 	},
 	"description": "Wrapper for the CheddarGetter recurring billing system APIs",
-	"homepage": "https://github.com/respectTheCode/node-cheddargetter",
+	"homepage": "https://github.com/jamiter/node-cheddargetter",
 	"dependencies": {
-		"async": "0.1.x",
-		"xml2js": "0.1.x",
-		"qs": "0.6.x"
+		"async": "0.9.0",
+		"xml2js": "0.4.4",
+		"qs": "2.3.3"
 	},
 	"devDependencies": {
-		"nodeunit": "0.6.x"
+		"nodeunit": "0.9.0"
 	},
 	"engines": ["node >= 0.4.x"],
-	"main": "lib/cheddargetter"
+	"main": "lib/cheddargetter",
+	"scripts": {
+		"test": "node test"
+	}
 }
