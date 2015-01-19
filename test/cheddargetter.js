@@ -28,7 +28,7 @@ module.exports.Plans = function (test) {
 		test.equal(typeof(result),"object", "getAllPricingPlans should return a plan array");
 		test.ok(result.length > 0, "There should be more than 0 plans");
 
-		cg.getPricingPlan(result[0]["@"].code, cb);
+		cg.getPricingPlan(result[0].$.code, cb);
 	}, function (result, cb) {
 		test.equal(typeof(result), "object", "getPricingPlan should return a plan object");
 
@@ -61,7 +61,7 @@ module.exports.Customers = function (test) {
 				planCode: config.planCode,
 				method: "cc",
 				ccNumber: "4111111111111111",
-				ccExpiration: "12/2012",
+				ccExpiration: "12/2020",
 				ccCardCode: "123",
 				ccFirstName: "FName",
 				ccLastName:"LName",
@@ -78,7 +78,7 @@ module.exports.Customers = function (test) {
 				planCode: config.planCode,
 				method: "cc",
 				ccNumber: "4111111111111111",
-				ccExpiration: "12/2012",
+				ccExpiration: "12/2020",
 				ccCardCode: "123",
 				ccFirstName: "FName2",
 				ccLastName:"LName2",
@@ -90,7 +90,7 @@ module.exports.Customers = function (test) {
 	}, function (result, cb) {
 		test.equal(typeof(result), "object", "getAllCustomers should return a customer array");
 		test.equal(result.length, 2, "getAllCustomers should return 2 customers");
-		test.equal(result[0]["@"].code, "test", "first customer should be 'test'");
+		test.equal(result[0].$.code, "test", "first customer should be 'test'");
 
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
