@@ -28,7 +28,7 @@ module.exports.Plans = function (test) {
 		test.equal(typeof(result),"object", "getAllPricingPlans should return a plan array");
 		test.ok(result.length > 0, "There should be more than 0 plans");
 
-		cg.getPricingPlan(result[0].$.code, cb);
+		cg.getPricingPlan(result[0].code, cb);
 	}, function (result, cb) {
 		test.equal(typeof(result), "object", "getPricingPlan should return a plan object");
 
@@ -86,11 +86,18 @@ module.exports.Customers = function (test) {
 			}
 		}, cb);
 	}, function (result, cb) {
-		cg.getAllCustomers(cb);
+		var options = {
+			planCode: [config.planCode],
+			subscriptionStatus: 'activeOnly',
+			orderBy: "createdDatetime",
+			orderByDirection: "desc",
+			createdAfterDate: "2015-01-01"
+		}
+
+		cg.getAllCustomers(options, cb);
 	}, function (result, cb) {
 		test.equal(typeof(result), "object", "getAllCustomers should return a customer array");
-		test.equal(result.length, 2, "getAllCustomers should return 2 customers");
-		test.equal(result[0].$.code, "test", "first customer should be 'test'");
+		test.equal(result[0].code, "test1", "first customer should be 'test'");
 
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
@@ -116,41 +123,50 @@ module.exports.Items = function (test) {
 	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
 
 	async.waterfall([function (cb) {
-		cg.setItemQuantity("test", config.itemCode, 5, cb);
+		cg.setItemQuantity("test", config.itemCode, 1, cb);
 	}, function (result, cb) {
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
-		test.equal(parseInt(result.subscriptions.subscription.items.item[0].quantity, 10), 5);
+		test.equal(result.subscriptions[0].items[0].quantity, 1);
 		cb(null, {});
 	}, function (result, cb) {
 		cg.addItem("test", config.itemCode, 2, cb);
 	}, function (result, cb) {
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
-		test.equal(parseInt(result.subscriptions.subscription.items.item[0].quantity, 10), 5 + 2);
+		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2);
 		cb(null, {});
 	}, function (result, cb) {
 		cg.addItem("test", config.itemCode, cb);
 	}, function (result, cb) {
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
-		test.equal(parseInt(result.subscriptions.subscription.items.item[0].quantity, 10), 5 + 2 + 1);
+		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1);
 		cb(null, {});
 	}, function (result, cb) {
 		cg.removeItem("test", config.itemCode, 2, cb);
 	}, function (result, cb) {
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
-		test.equal(parseInt(result.subscriptions.subscription.items.item[0].quantity, 10), 5 + 2 + 1 - 2);
+		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1 - 2);
 		cb(null, {});
 	}, function (result, cb) {
 		cg.removeItem("test", config.itemCode, cb);
 	}, function (result, cb) {
 		cg.getCustomer("test", cb);
 	}, function (result, cb) {
-		test.equal(parseInt(result.subscriptions.subscription.items.item[0].quantity, 10), 5 + 2 + 1 - 2 - 1);
+		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1 - 2 - 1);
 		cb(null, {});
-	}, function (result, cb) {
+	}], function (err) {
+		test.ifError(err);
+		test.done();
+	});
+};
+
+module.exports.CustomerDeletion = function (test) {
+	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+
+	async.waterfall([function (cb) {
 		cg.deleteCustomer("test", cb);
 	}, function (result, cb) {
 		cg.deleteCustomer("test1", cb);
