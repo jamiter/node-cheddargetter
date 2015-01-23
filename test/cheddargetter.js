@@ -92,7 +92,7 @@ module.exports.Customers = function (test) {
 			orderBy: "createdDatetime",
 			orderByDirection: "desc",
 			createdAfterDate: "2015-01-01"
-		}
+		};
 
 		cg.getAllCustomers(options, cb);
 	}, function (result, cb) {
