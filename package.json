@@ -1,6 +1,6 @@
 {
 	"name": "cg",
-	"version": "0.3.4",
+	"version": "0.3.5",
 	"author": "Michiel ter Reehorst",
 	"repository": {
 		"type": "git",
@@ -8,6 +8,12 @@
 	},
 	"description": "Wrapper for the CheddarGetter recurring billing system APIs",
 	"homepage": "https://github.com/jamiter/node-cheddargetter",
+	"keywords": [
+		"cheddargetter",
+		"cheddar",
+		"getter",
+		"api"
+	],
 	"dependencies": {
 		"async": "0.9.0",
 		"concat-stream": "1.4.7",
