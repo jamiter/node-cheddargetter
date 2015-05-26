@@ -33,7 +33,7 @@ npm install cg
 # Usage
 
 ```javascript
-var CheddarGetter = require("CheddarGetter");
+var CheddarGetter = require("cg");
 
 var cg = new CheddarGetter("email@example.com", "passwordExample", "ProductCode");
 
