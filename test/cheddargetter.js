@@ -5,8 +5,7 @@ var CheddarGetter = require("../lib/cheddargetter");
 var config = {};
 
 try {
-	var json = fs.readFileSync("./config.conf").toString();
-	json = JSON.parse(json);
+	var json = require("../config.json");
 
 	for (var key in json) {
 		if (json.hasOwnProperty(key)) {
@@ -21,7 +20,7 @@ try {
 module.exports = {};
 
 module.exports.Plans = function (test) {
-	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+	var cg = new CheddarGetter(config.email, config.pass, config.productCode);
 	async.waterfall([function (cb) {
 		cg.getAllPricingPlans(cb);
 	}, function (result, cb) {
@@ -40,7 +39,7 @@ module.exports.Plans = function (test) {
 };
 
 module.exports.PlanError = function (test) {
-	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+	var cg = new CheddarGetter(config.email, config.pass, config.productCode);
 
 	cg.getPricingPlan("Bad Plan Code", function (err, customer) {
 		test.notEqual(err, null);
@@ -50,7 +49,7 @@ module.exports.PlanError = function (test) {
 };
 
 module.exports.Customers = function (test) {
-	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+	var cg = new CheddarGetter(config.email, config.pass, config.productCode);
 	async.waterfall([function (cb) {
 		cg.createCustomer({
 			code: "test",
@@ -110,7 +109,7 @@ module.exports.Customers = function (test) {
 };
 
 module.exports.CustomerError = function (test) {
-	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+	var cg = new CheddarGetter(config.email, config.pass, config.productCode);
 
 	cg.getCustomer("Bad Customer Code", function (err, customer) {
 		test.notEqual(err, null);
@@ -120,7 +119,7 @@ module.exports.CustomerError = function (test) {
 };
 
 module.exports.Items = function (test) {
-	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+	var cg = new CheddarGetter(config.email, config.pass, config.productCode);
 
 	async.waterfall([function (cb) {
 		cg.setItemQuantity("test", config.itemCode, 1, cb);
@@ -164,7 +163,7 @@ module.exports.Items = function (test) {
 };
 
 module.exports.CustomerDeletion = function (test) {
-	var cg = new CheddarGetter(config.user, config.pass, config.productCode);
+	var cg = new CheddarGetter(config.email, config.pass, config.productCode);
 
 	async.waterfall([function (cb) {
 		cg.deleteCustomer("test", cb);

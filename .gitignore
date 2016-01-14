@@ -1,6 +1,6 @@
 node_modules
 .settings.xml
-config.conf
+config.json
 public/stylesheets/*.css
 *.gz
 npm-debug.log

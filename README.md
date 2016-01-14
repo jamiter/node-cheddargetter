@@ -37,11 +37,23 @@ var CheddarGetter = require("cg");
 
 var cg = new CheddarGetter("email@example.com", "passwordExample", "ProductCode");
 
-cg.getAllPricingPlans(function (err, results) {
-	console.log(err, results);
+cg.getAllPricingPlans(function (error, results) {
+	console.log(error, results);
 });
 ```
 # Tests
+First add a config file (`config.json`) with all your CheddarGetter credentials:
+
+```javascript
+{
+  "email": "EMAIL",
+  "pass": "PASSWORD",
+  "productCode": "PRODUCTCODE",
+  "planCode": "PLANCODE",
+  "itemCode": "ITEMCODE"
+}
+```
+
 
 ```
 npm test
