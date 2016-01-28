@@ -20,6 +20,7 @@ As of version 0.1.4 the module implements the following API calls:
 * `addCustomCharge(customerCode, chargeCode, quantity, amount, description, callback)`
 * `deleteCustomCharge(customerCode, chargeId, callback)`
 * `resendInvoiceEmail(idOrNumber, callback)`
+* `oneTimeInvoice(customerCode, {data}, callback)`
 
 All callbacks are called with `error` and `results` parameters.
 
