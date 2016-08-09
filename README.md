@@ -41,6 +41,19 @@ cg.getAllPricingPlans(function (error, results) {
 	console.log(error, results);
 });
 ```
+
+# Proxy
+
+You might want to set up a proxy to communicate with CheddarGetter. CheddarGetter blocks most of the Heroku servers (a range of AWS IPs):
+
+> Recently, a large block of IPs on the Heroku platform were listed by DenyHosts due to a spike in SSH brute force attacks coming from the Heroku platform. In short, you need to be coming from an IP that isn't listed.
+
+A proxy host is easily set with the `CHEDDARGETTER_HOST` environment variable:
+
+```
+CHEDDARGETTER_HOST=example.com node your-server.js
+```
+
 # Tests
 First add a config file (`config.json`) with all your CheddarGetter credentials:
 
