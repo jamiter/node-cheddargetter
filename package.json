@@ -25,7 +25,7 @@
 		"nodeunit": "0.9.0"
 	},
 	"engines": ["node >= 0.4.x"],
-	"main": "lib/cheddargetter",
+	"main": "lib/cheddar",
 	"scripts": {
 		"test": "node test"
 	}

@@ -1,1 +1,1 @@
-exports = module.exports = require("./lib/cheddargetter.js");
+exports = module.exports = require("./lib/cheddar.js");

@@ -1,3 +1,3 @@
 var reporter = require('nodeunit').reporters.default;
 
-reporter.run(['./test/cheddargetter.js']);
+reporter.run(['./test/cheddar.js']);
