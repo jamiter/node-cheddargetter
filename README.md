@@ -2,27 +2,29 @@
 
 This module will simplify the process of integrating [Cheddar](https://www.getcheddar.com/) into your existing node.js apps.
 
-* `getAllPricingPlans(callback)`
-* `getPricingPlan(planCode, callback)`
-* `getAllCustomers([searchParams], callback)`
-* `getCustomer(customerCode, callback)`
-* `createCustomer(customerData, callback)`
-* `editCustomerAndSubscription(customerData, callback)` or `updateCustomerAndSubscription(customerData, callback)`
-* `editCustomer(customerCode, customerData, callback)` or `updateCustomer(customerCode, customerData, callback)`
-* `editSubscription(customerCode, customerData, callback)` or `updateSubscription(customerCode, customerData, callback)`
-* `deleteCustomer(customerCode, callback)`
-* `cancelSubscription(customerCode, callback)`
-* `addItem(customerCode, itemCode, [amount], callback)`
-* `removeItem(customerCode, itemCode, [amount], callback)`
-* `setItemQuantity(customerCode, itemCode, amount, callback)`
-* `addCustomCharge(customerCode, chargeCode, quantity, amount, description, callback)`
-* `deleteCustomCharge(customerCode, chargeId, callback)`
-* `resendInvoiceEmail(idOrNumber, callback)`
-* `oneTimeInvoice(customerCode, {data}, callback)`
+* `getAllPricingPlans()`
+* `getPricingPlan(planCode)`
+* `getAllCustomers([searchParams])`
+* `getCustomer(customerCode)`
+* `createCustomer(customerData)`
+* `editCustomerAndSubscription(customerData)` or `updateCustomerAndSubscription(customerData)`
+* `editCustomer(customerCode, customerData)` or `updateCustomer(customerCode, customerData)`
+* `editSubscription(customerCode, customerData)` or `updateSubscription(customerCode, customerData)`
+* `deleteCustomer(customerCode)`
+* `cancelSubscription(customerCode)`
+* `addItem(customerCode, itemCode, [amount])`
+* `removeItem(customerCode, itemCode, [amount])`
+* `setItemQuantity(customerCode, itemCode, amount)`
+* `addCustomCharge(customerCode, chargeCode, quantity, amount, description)`
+* `deleteCustomCharge(customerCode, chargeId)`
+* `resendInvoiceEmail(idOrNumber)`
+* `oneTimeInvoice(customerCode, {data})`
 
-All callbacks are called with `error` and `results` parameters.
+All methods return a promise with the requested data.
 
-Not all API calls have been fully tested and many unit tests are still missing.
+Callbacks are available for backwards compatibility and are called with `error` and `results` parameters.
+
+Not all API calls have been fully tested yet.
 
 # Install
 
@@ -37,8 +39,10 @@ var Cheddar = require("cg");
 
 var cheddar = new Cheddar("email@example.com", "passwordExample", "ProductCode");
 
-cheddar.getAllPricingPlans(function (error, results) {
-	console.log(error, results);
+cheddar.getAllPricingPlans().then(function (results) {
+  console.log(results);
+}).catch(function (err) {
+  console.error(err);
 });
 ```
 
