@@ -6,3 +6,4 @@ public/stylesheets/*.css
 npm-debug.log
 *.swp
 *~
+.idea
