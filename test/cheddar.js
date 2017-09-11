@@ -21,19 +21,15 @@ module.exports = {};
 
 module.exports.Plans = function (test) {
 	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
-	async.waterfall([function (cb) {
-		cheddar.getAllPricingPlans(cb);
-	}, function (result, cb) {
+
+	cheddar.getAllPricingPlans()
+	.then(function (result) {
 		test.equal(typeof(result),"object", "getAllPricingPlans should return a plan array");
 		test.ok(result.length > 0, "There should be more than 0 plans");
 
-		cheddar.getPricingPlan(result[0].code, cb);
-	}, function (result, cb) {
+		return cheddar.getPricingPlan(result[0].code);
+	}).then(function (result) {
 		test.equal(typeof(result), "object", "getPricingPlan should return a plan object");
-
-		cb();
-	}], function (err) {
-		test.ifError(err);
 		test.done();
 	});
 };
@@ -90,7 +86,7 @@ module.exports.Customers = function (test) {
 			subscriptionStatus: 'activeOnly',
 			orderBy: "createdDatetime",
 			orderByDirection: "desc",
-			createdAfterDate: "2015-01-01"
+			createdAfterDate: "2017-01-01"
 		};
 
 		cheddar.getAllCustomers(options, cb);
@@ -111,9 +107,8 @@ module.exports.Customers = function (test) {
 module.exports.CustomerError = function (test) {
 	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
 
-	cheddar.getCustomer("Bad Customer Code", function (err, customer) {
+	cheddar.getCustomer("Bad Customer Code").catch(function(err) {
 		test.notEqual(err, null);
-		test.equal(customer, null);
 		test.done();
 	});
 };
@@ -121,42 +116,36 @@ module.exports.CustomerError = function (test) {
 module.exports.Items = function (test) {
 	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
 
-	async.waterfall([function (cb) {
-		cheddar.setItemQuantity("test", config.itemCode, 1, cb);
-	}, function (result, cb) {
-		cheddar.getCustomer("test", cb);
-	}, function (result, cb) {
+	cheddar.setItemQuantity("test", config.itemCode, 1)
+	.then(function () {
+		return cheddar.getCustomer("test");
+	}).then(function (result) {
 		test.equal(result.subscriptions[0].items[0].quantity, 1);
-		cb(null, {});
-	}, function (result, cb) {
-		cheddar.addItem("test", config.itemCode, 2, cb);
-	}, function (result, cb) {
-		cheddar.getCustomer("test", cb);
-	}, function (result, cb) {
+
+		return cheddar.addItem("test", config.itemCode, 2);
+	}).then(function (result) {
+		return cheddar.getCustomer("test");
+	}).then(function (result) {
 		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2);
-		cb(null, {});
-	}, function (result, cb) {
-		cheddar.addItem("test", config.itemCode, cb);
-	}, function (result, cb) {
-		cheddar.getCustomer("test", cb);
-	}, function (result, cb) {
+		return cheddar.addItem("test", config.itemCode);
+	}).then(function () {
+		return cheddar.getCustomer("test");
+	}).then(function (result) {
 		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1);
-		cb(null, {});
-	}, function (result, cb) {
-		cheddar.removeItem("test", config.itemCode, 2, cb);
-	}, function (result, cb) {
-		cheddar.getCustomer("test", cb);
-	}, function (result, cb) {
+
+		return cheddar.removeItem("test", config.itemCode, 2);
+	}).then(function () {
+		return cheddar.getCustomer("test");
+	}).then(function (result) {
 		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1 - 2);
-		cb(null, {});
-	}, function (result, cb) {
-		cheddar.removeItem("test", config.itemCode, cb);
-	}, function (result, cb) {
-		cheddar.getCustomer("test", cb);
-	}, function (result, cb) {
+
+		return cheddar.removeItem("test", config.itemCode);
+	}).then(function (result) {
+		return cheddar.getCustomer("test");
+	}).then(function (result) {
 		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1 - 2 - 1);
-		cb(null, {});
-	}], function (err) {
+		test.done();
+	}).catch(function (err) {
 		test.ifError(err);
 		test.done();
 	});
@@ -165,11 +154,12 @@ module.exports.Items = function (test) {
 module.exports.CustomerDeletion = function (test) {
 	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
 
-	async.waterfall([function (cb) {
-		cheddar.deleteCustomer("test", cb);
-	}, function (result, cb) {
-		cheddar.deleteCustomer("test1", cb);
-	}], function (err) {
+	Promise.all([
+		cheddar.deleteCustomer("test"),
+		cheddar.deleteCustomer("test1"),
+	]).then(function () {
+		test.done();
+	}).catch(function (err) {
 		test.ifError(err);
 		test.done();
 	});
