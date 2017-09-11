@@ -6,9 +6,10 @@
 		"type": "git",
 		"url": "https://github.com/jamiter/node-cheddargetter"
 	},
-	"description": "Wrapper for the CheddarGetter recurring billing system APIs",
+	"description": "Wrapper for the Cheddar recurring billing system APIs",
 	"homepage": "https://github.com/jamiter/node-cheddargetter",
 	"keywords": [
+		"getcheddar",
 		"cheddargetter",
 		"cheddar",
 		"getter",

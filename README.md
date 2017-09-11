@@ -1,6 +1,6 @@
 # Goals and Status
 
-This module will simplify the process of integrating CheddarGetter into your existing node.js apps.
+This module will simplify the process of integrating [Cheddar](https://www.getcheddar.com/) into your existing node.js apps.
 
 * `getAllPricingPlans(callback)`
 * `getPricingPlan(planCode, callback)`
@@ -33,25 +33,25 @@ npm install cg
 # Usage
 
 ```javascript
-var CheddarGetter = require("cg");
+var Cheddar = require("cg");
 
-var cg = new CheddarGetter("email@example.com", "passwordExample", "ProductCode");
+var cheddar = new Cheddar("email@example.com", "passwordExample", "ProductCode");
 
-cg.getAllPricingPlans(function (error, results) {
+cheddar.getAllPricingPlans(function (error, results) {
 	console.log(error, results);
 });
 ```
 
 # Proxy
 
-You might want to set up a proxy to communicate with CheddarGetter. CheddarGetter blocks most of the Heroku servers (a range of AWS IPs):
+You might want to set up a proxy to communicate with Cheddar. Cheddar blocks most of the Heroku servers (a range of AWS IPs):
 
 > Recently, a large block of IPs on the Heroku platform were listed by DenyHosts due to a spike in SSH brute force attacks coming from the Heroku platform. In short, you need to be coming from an IP that isn't listed.
 
-A proxy host is easily set with the `CHEDDARGETTER_HOST` environment variable:
+A proxy host is easily set with the `CHEDDAR_HOST` environment variable:
 
 ```
-CHEDDARGETTER_HOST=example.com node your-server.js
+CHEDDAR_HOST=example.com node your-server.js
 ```
 
 # Tests
