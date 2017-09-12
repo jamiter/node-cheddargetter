@@ -59,7 +59,7 @@ CHEDDAR_HOST=example.com node your-server.js
 ```
 
 # Tests
-First add a config file (`config.json`) with all your CheddarGetter credentials:
+First add a config file (`config.json`) with all your Cheddar credentials:
 
 ```javascript
 {
@@ -71,10 +71,12 @@ First add a config file (`config.json`) with all your CheddarGetter credentials:
 }
 ```
 
-
 ```
+npm install
 npm test
 ```
+
+> **WARNING:** Only run the tests on a development account to prevent any side effects in production
 
 # Credits
 Original work was done by [Kevin Smith](https://github.com/respectTheCode).
