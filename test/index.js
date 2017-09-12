@@ -1,1 +1,1 @@
-require('./cheddar');
+require('./cheddar.spec');
