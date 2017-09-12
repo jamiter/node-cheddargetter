@@ -1,3 +1,5 @@
+> **DEPRECATED**: This package has been deprecated in favour of the `cheddar` package. See [repo](https://github.com/jamiter/node-cheddar-api) or [npm](https://www.npmjs.com/package/cheddar).
+
 # Goals and Status
 
 This module will simplify the process of integrating [Cheddar](https://www.getcheddar.com/) into your existing node.js apps.
