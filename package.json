@@ -32,7 +32,7 @@
   },
   "main": "lib/cheddar",
   "scripts": {
-    "test": "eslint ."
+    "test": "eslint . && mocha"
   },
   "false": {}
 }

@@ -1,166 +1,185 @@
-var fs = require("fs");
-var async = require("async");
-var Cheddar = require("../lib/cheddar");
+/* eslint-disable func-names */
+/* eslint-env node, mocha */
+var chai = require('chai');
+var Cheddar = require('../lib/cheddar');
+var config = require('../config.json');
 
-var config = {};
-
-try {
-	var json = require("../config.json");
-
-	for (var key in json) {
-		if (json.hasOwnProperty(key)) {
-			config[key] = json[key];
-		}
-	}
-} catch (error) {
-	console.log("Error: " + error);
-	process.exit();
+async function wait(ms) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+    });
 }
 
-module.exports = {};
+describe('Cheddar', function () {
+    this.timeout(30000);
+    this.slow(2000);
 
-module.exports.Plans = function (test) {
-	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
+    beforeEach(function () {
+        this.customerCode1 = 'customerCode1';
+        this.customerCode2 = 'customerCode2';
+        this.cheddar = new Cheddar(config.email, config.pass, config.productCode);
+    });
 
-	cheddar.getAllPricingPlans()
-	.then(function (result) {
-		test.equal(typeof(result),"object", "getAllPricingPlans should return a plan array");
-		test.ok(result.length > 0, "There should be more than 0 plans");
+    describe('Plans', async function () {
+        describe('#getAllPricingPlans', function () {
+            it('should return a plan array', async function () {
+                var plans = await this.cheddar.getAllPricingPlans();
 
-		return cheddar.getPricingPlan(result[0].code);
-	}).then(function (result) {
-		test.equal(typeof(result), "object", "getPricingPlan should return a plan object");
-		test.done();
-	});
-};
+                chai.expect(plans).to.be.an('array');
+                chai.expect(plans.length).to.be.at.least(1);
+            });
+        });
 
-module.exports.PlanError = function (test) {
-	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
+        describe('#getPricingPlan', function () {
+            it('should return a single plan', async function () {
+                var plan = await this.cheddar.getPricingPlan(config.planCode);
 
-	cheddar.getPricingPlan("Bad Plan Code", function (err, customer) {
-		test.notEqual(err, null);
-		test.equal(customer, null);
-		test.done();
-	});
-};
+                chai.expect(typeof plan).to.equal('object');
+            });
 
-module.exports.Customers = function (test) {
-	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
-	async.waterfall([function (cb) {
-		cheddar.createCustomer({
-			code: "test",
-			firstName: "FName",
-			lastName: "LName",
-			email: "test@test.com",
-			subscription: {
-				planCode: config.planCode,
-				method: "cc",
-				ccNumber: "4111111111111111",
-				ccExpiration: "12/2020",
-				ccCardCode: "123",
-				ccFirstName: "FName",
-				ccLastName:"LName",
-				ccZip: "95123"
-			}
-		}, cb);
-	}, function (result, cb) {
-		cheddar.createCustomer({
-			code: "test1",
-			firstName: "FName2",
-			lastName: "LName2",
-			email: "test2@test.com",
-			subscription: {
-				planCode: config.planCode,
-				method: "cc",
-				ccNumber: "4111111111111111",
-				ccExpiration: "12/2020",
-				ccCardCode: "123",
-				ccFirstName: "FName2",
-				ccLastName:"LName2",
-				ccZip: "95123"
-			}
-		}, cb);
-	}, function (result, cb) {
-		var options = {
-			planCode: [config.planCode],
-			subscriptionStatus: 'activeOnly',
-			orderBy: "createdDatetime",
-			orderByDirection: "desc",
-			createdAfterDate: "2017-01-01"
-		};
+            it('should fail on bad plan code', async function () {
+                try {
+                    await this.cheddar.getPricingPlan('Bad Plan Code');
+                } catch (err) {
+                    chai.expect(err.message).to.include('Plan not found');
+                }
+            });
+        });
+    });
 
-		cheddar.getAllCustomers(options, cb);
-	}, function (result, cb) {
-		test.equal(typeof(result), "object", "getAllCustomers should return a customer array");
-		test.equal(result[0].code, "test1", "first customer should be 'test'");
+    describe('Customers', function () {
+        describe('#createCustomer', function () {
+            it('should create a customer', async function () {
+                var subscriptionData = {
+                    planCode: config.planCode,
+                    method: 'cc',
+                    ccNumber: '4111111111111111',
+                    ccExpiration: '12/2020',
+                    ccCardCode: '123',
+                    ccFirstName: 'FName',
+                    ccLastName: 'LName',
+                    ccZip: '95123',
+                };
 
-		cheddar.getCustomer("test", cb);
-	}, function (result, cb) {
-		test.equal(typeof(result), "object", "getCustomer should return a customer object");
-		cb();
-	}], function (err) {
-		test.ifError(err);
-		test.done();
-	});
-};
+                await this.cheddar.createCustomer({
+                    code: this.customerCode1,
+                    firstName: 'FName',
+                    lastName: 'LName',
+                    email: 'test@example.com',
+                    subscription: subscriptionData,
+                });
 
-module.exports.CustomerError = function (test) {
-	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
+                await this.cheddar.createCustomer({
+                    code: this.customerCode2,
+                    firstName: 'FName2',
+                    lastName: 'LName2',
+                    email: 'test2@example.com',
+                    subscription: subscriptionData,
+                });
+            });
+        });
 
-	cheddar.getCustomer("Bad Customer Code").catch(function(err) {
-		test.notEqual(err, null);
-		test.done();
-	});
-};
+        describe('#getAllCustomers', function () {
+            it('should retrieve all customers', async function () {
+                // Make sure the customers are created
+                await wait(2000);
 
-module.exports.Items = function (test) {
-	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
+                var options = {
+                    planCode: [config.planCode],
+                    subscriptionStatus: 'activeOnly',
+                    orderBy: 'createdDatetime',
+                    orderByDirection: 'desc',
+                    createdAfterDate: '2017-01-01',
+                };
 
-	cheddar.setItemQuantity("test", config.itemCode, 1)
-	.then(function () {
-		return cheddar.getCustomer("test");
-	}).then(function (result) {
-		test.equal(result.subscriptions[0].items[0].quantity, 1);
+                var customers = await this.cheddar.getAllCustomers(options);
 
-		return cheddar.addItem("test", config.itemCode, 2);
-	}).then(function (result) {
-		return cheddar.getCustomer("test");
-	}).then(function (result) {
-		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2);
-		return cheddar.addItem("test", config.itemCode);
-	}).then(function () {
-		return cheddar.getCustomer("test");
-	}).then(function (result) {
-		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1);
+                chai.expect(customers).to.be.an('array');
+                chai.expect(customers.length).to.equal(2);
+                chai.expect(customers[0].code).to.equal(this.customerCode2);
+            });
+        });
 
-		return cheddar.removeItem("test", config.itemCode, 2);
-	}).then(function () {
-		return cheddar.getCustomer("test");
-	}).then(function (result) {
-		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1 - 2);
+        describe('#getCustomer', function () {
+            it('should retrieve a customer with the right code', async function () {
+                var customer = await this.cheddar.getCustomer(this.customerCode1);
+                chai.expect(customer).to.be.an('object');
+            });
 
-		return cheddar.removeItem("test", config.itemCode);
-	}).then(function (result) {
-		return cheddar.getCustomer("test");
-	}).then(function (result) {
-		test.equal(result.subscriptions[0].items[0].quantity, 1 + 2 + 1 - 2 - 1);
-		test.done();
-	}).catch(function (err) {
-		test.ifError(err);
-		test.done();
-	});
-};
+            it('should fail with bad code', async function () {
+                try {
+                    await this.cheddar.getCustomer('Bad Customer Code');
+                } catch (err) {
+                    chai.expect(err.message).to.include('Customer not found');
+                }
+            });
+        });
+    });
 
-module.exports.CustomerDeletion = function (test) {
-	var cheddar = new Cheddar(config.email, config.pass, config.productCode);
+    describe('Items', function () {
+        describe('#setItemQuantity', function () {
+            it('should increase the item count', async function () {
+                await this.cheddar.setItemQuantity(this.customerCode1, config.itemCode, 1);
 
-	Promise.all([
-		cheddar.deleteCustomer("test"),
-		cheddar.deleteCustomer("test1"),
-	]).then(function () {
-		test.done();
-	}).catch(function (err) {
-		test.ifError(err);
-		test.done();
-	});
-};
+                var customer = await this.cheddar.getCustomer(this.customerCode1);
+
+                chai.expect(customer.subscriptions[0].items[0].quantity).to.equal(1);
+            });
+        });
+
+        describe('#addItem', function () {
+            it('should add to the item count', async function () {
+                await this.cheddar.addItem(this.customerCode1, config.itemCode, 2);
+
+                var customer = await this.cheddar.getCustomer(this.customerCode1);
+
+                chai.expect(customer.subscriptions[0].items[0].quantity).to.equal(1 + 2);
+            });
+
+            it('should default to 1 as item count', async function () {
+                await this.cheddar.addItem(this.customerCode1, config.itemCode);
+
+                var customer = await this.cheddar.getCustomer(this.customerCode1);
+
+                chai.expect(customer.subscriptions[0].items[0].quantity).to.equal(1 + 2 + 1);
+            });
+        });
+
+        describe('#removeItem', function () {
+            it('should decrease the item count', async function () {
+                await this.cheddar.removeItem(this.customerCode1, config.itemCode, 2);
+
+                var customer = await this.cheddar.getCustomer(this.customerCode1);
+
+                chai.expect(customer.subscriptions[0].items[0].quantity).to.equal(2);
+            });
+
+            it('should default to 1 as item count', async function () {
+                await this.cheddar.removeItem(this.customerCode1, config.itemCode);
+
+                var customer = await this.cheddar.getCustomer(this.customerCode1);
+
+                chai.expect(customer.subscriptions[0].items[0].quantity).to.equal(1);
+            });
+        });
+    });
+
+    describe('#deleteCustomer', function () {
+        it('should remove a specific customer', async function () {
+            await this.cheddar.deleteCustomer(this.customerCode1);
+        });
+    });
+
+    describe('#deleteAllCustomers', function () {
+        it('should remove all customers (in development mode)', async function () {
+            var ts = Math.round((new Date()).getTime() / 1000) + 2000;
+            await this.cheddar.deleteAllCustomers(ts);
+
+            try {
+                this.cheddar.getAllCustomers({});
+            } catch (err) {
+                chai.expect(err.message).to.include('No customers found');
+            }
+        });
+    });
+});
