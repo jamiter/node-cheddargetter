@@ -1,9 +1,4 @@
 node_modules
-.settings.xml
 config.json
-public/stylesheets/*.css
-*.gz
 npm-debug.log
-*.swp
-*~
 .idea
